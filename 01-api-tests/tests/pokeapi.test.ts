@@ -3,6 +3,7 @@
 
 // Usamos require para evitar problemas de módulo con TypeScript + CommonJS
 const request = require("supertest");
+const { config } = require("../src/config");
 
 const BASE_URL = "https://pokeapi.co";
 
@@ -15,5 +16,13 @@ describe("PokéAPI - basic checks", () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("name", "pikachu");
     expect(response.body.abilities.length).toBeGreaterThan(0);
+  });
+
+  it("returns 404 for an unknown pokemon", async () => {
+    const response = await request(config.baseUrl).get(
+      "/api/v2/pokemon/thisdoesnotexist"
+    );
+
+    expect(response.status).toBe(404);
   });
 });
