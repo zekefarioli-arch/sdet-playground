@@ -4,11 +4,28 @@
 const request = require("supertest");
 const { config } = require("./config");
 
-function createApiClient() {
+type ApiClientConfig = {
+  baseUrl: string;
+  timeoutMs: number;
+};
+
+type ApiClient = {
+  get: (path: string) => any;
+  post: (path: string, body: any) => any;
+};
+
+function createApiClient(
+  apiConfig: ApiClientConfig = config as ApiClientConfig
+): ApiClient {
   return {
-    get: (path) => request(config.baseUrl).get(path).timeout(config.timeoutMs),
-    post: (path, body) =>
-      request(config.baseUrl).post(path).send(body).timeout(config.timeoutMs),
+    get: (path: string) =>
+      request(apiConfig.baseUrl).get(path).timeout(apiConfig.timeoutMs),
+
+    post: (path: string, body: any) =>
+      request(apiConfig.baseUrl)
+        .post(path)
+        .send(body)
+        .timeout(apiConfig.timeoutMs),
   };
 }
 
